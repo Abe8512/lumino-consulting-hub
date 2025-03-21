@@ -5,12 +5,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { FadeIn } from './animations/FadeIn';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, CheckCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -56,7 +57,9 @@ const Contact = () => {
         description: "We'll get back to you shortly.",
         duration: 5000
       });
-      setTimeout(() => setIsSuccess(false), 5000);
+      
+      // Keep success message visible until user takes action
+      window.scrollTo({ top: document.getElementById('contact')?.offsetTop || 0, behavior: 'smooth' });
     } catch (error) {
       console.error('Error submitting form:', error);
       toast({
@@ -78,6 +81,11 @@ const Contact = () => {
     }
     
     form.setValue('subject', 'Consultation Request');
+  };
+
+  const resetForm = () => {
+    setIsSuccess(false);
+    form.reset();
   };
 
   return (
@@ -103,172 +111,187 @@ const Contact = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           <FadeIn direction="left">
             <div className="glass-card p-8 rounded-xl">
-              <h3 className="text-2xl font-bold mb-6">Send Us a Message</h3>
               {isSuccess ? (
-                <div className="p-4 bg-green-50 text-green-800 rounded-md mb-4">
-                  Thank you for your message! We'll get back to you soon.
-                </div>
-              ) : null}
-              
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Full Name</FormLabel>
-                          <FormControl>
-                            <Input 
-                              id="name"
-                              placeholder="Your name" 
-                              className="w-full bg-white/70 border-gray-200 focus:border-lumino-500 focus:ring focus:ring-lumino-200 focus:ring-opacity-50 transition-all"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email Address</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="email" 
-                              placeholder="your@email.com" 
-                              className="w-full bg-white/70 border-gray-200 focus:border-lumino-500 focus:ring focus:ring-lumino-200 focus:ring-opacity-50 transition-all"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <div className="bg-green-100 text-green-600 rounded-full p-3 mb-6">
+                    <CheckCircle className="h-12 w-12" />
                   </div>
-
-                  <FormField
-                    control={form.control}
-                    name="company"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Company Name</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="Your company" 
-                            className="w-full bg-white/70 border-gray-200 focus:border-lumino-500 focus:ring focus:ring-lumino-200 focus:ring-opacity-50 transition-all"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="subject"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Subject</FormLabel>
-                        <FormControl>
-                          <Input 
-                            placeholder="How can we help you?" 
-                            className="w-full bg-white/70 border-gray-200 focus:border-lumino-500 focus:ring focus:ring-lumino-200 focus:ring-opacity-50 transition-all"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Message</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            rows={4} 
-                            placeholder="Tell us about your operational challenges..." 
-                            className="w-full bg-white/70 border-gray-200 focus:border-lumino-500 focus:ring focus:ring-lumino-200 focus:ring-opacity-50 transition-all"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="space-y-4 border-t border-gray-100 pt-4">
-                    <h4 className="text-sm font-medium text-gray-700">Communication Preferences</h4>
-                    
-                    <FormField
-                      control={form.control}
-                      name="smsConsent"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel className="text-sm font-normal">
-                              I agree to receive text messages from Lumino Strategies (up to 4 msgs/month).
-                            </FormLabel>
-                            <p className="text-xs text-gray-500">
-                              By submitting your phone number, you agree to receive messages from Lumino Strategies. 
-                              Message frequency varies. Message & data rates may apply. Reply STOP to cancel. 
-                              View our <Link to="/privacy-policy" className="text-lumino-600 hover:underline">Privacy Policy</Link>.
-                            </p>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="emailConsent"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel className="text-sm font-normal">
-                              I agree to receive email updates from Lumino Strategies.
-                            </FormLabel>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="text-xs text-gray-500 mb-4">
-                    By using this site, you agree to our <Link to="/terms-of-service" className="text-lumino-600 hover:underline">Terms of Service</Link>.
-                  </div>
-
+                  <h3 className="text-2xl font-bold mb-4">Thank You!</h3>
+                  <p className="text-gray-600 mb-6 max-w-md">
+                    We've received your message and we'll be in touch soon. A member of our team will contact you within 1-2 business days.
+                  </p>
                   <Button 
-                    type="submit"
-                    className="w-full bg-lumino-600 hover:bg-lumino-700 text-white shadow-sm"
-                    disabled={isSubmitting}
+                    onClick={resetForm}
+                    className="bg-lumino-600 hover:bg-lumino-700 text-white"
                   >
-                    {isSubmitting ? "Sending..." : "Send Message"}
+                    Send Another Message
                   </Button>
-                </form>
-              </Form>
+                </div>
+              ) : (
+                <>
+                  <h3 className="text-2xl font-bold mb-6">Send Us a Message</h3>
+                  
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Full Name</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  id="name"
+                                  placeholder="Your name" 
+                                  className="w-full bg-white/70 border-gray-200 focus:border-lumino-500 focus:ring focus:ring-lumino-200 focus:ring-opacity-50 transition-all"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Email Address</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  type="email" 
+                                  placeholder="your@email.com" 
+                                  className="w-full bg-white/70 border-gray-200 focus:border-lumino-500 focus:ring focus:ring-lumino-200 focus:ring-opacity-50 transition-all"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <FormField
+                        control={form.control}
+                        name="company"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Company Name</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="Your company" 
+                                className="w-full bg-white/70 border-gray-200 focus:border-lumino-500 focus:ring focus:ring-lumino-200 focus:ring-opacity-50 transition-all"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="subject"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Subject</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="How can we help you?" 
+                                className="w-full bg-white/70 border-gray-200 focus:border-lumino-500 focus:ring focus:ring-lumino-200 focus:ring-opacity-50 transition-all"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="message"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Message</FormLabel>
+                            <FormControl>
+                              <Textarea 
+                                rows={4} 
+                                placeholder="Tell us about your operational challenges..." 
+                                className="w-full bg-white/70 border-gray-200 focus:border-lumino-500 focus:ring focus:ring-lumino-200 focus:ring-opacity-50 transition-all"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <div className="space-y-4 border-t border-gray-100 pt-4">
+                        <h4 className="text-sm font-medium text-gray-700">Communication Preferences</h4>
+                        
+                        <FormField
+                          control={form.control}
+                          name="smsConsent"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                              <div className="space-y-1 leading-none">
+                                <FormLabel className="text-sm font-normal">
+                                  I agree to receive text messages from Lumino Strategies (up to 4 msgs/month).
+                                </FormLabel>
+                                <p className="text-xs text-gray-500">
+                                  By submitting your phone number, you agree to receive messages from Lumino Strategies. 
+                                  Message frequency varies. Message & data rates may apply. Reply STOP to cancel. 
+                                  View our <Link to="/privacy-policy" className="text-lumino-600 hover:underline">Privacy Policy</Link>.
+                                </p>
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="emailConsent"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                              <div className="space-y-1 leading-none">
+                                <FormLabel className="text-sm font-normal">
+                                  I agree to receive email updates from Lumino Strategies.
+                                </FormLabel>
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <div className="text-xs text-gray-500 mb-4">
+                        By using this site, you agree to our <Link to="/terms-of-service" className="text-lumino-600 hover:underline">Terms of Service</Link>.
+                      </div>
+
+                      <Button 
+                        type="submit"
+                        className="w-full bg-lumino-600 hover:bg-lumino-700 text-white shadow-sm"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? "Sending..." : "Send Message"}
+                      </Button>
+                    </form>
+                  </Form>
+                </>
+              )}
             </div>
           </FadeIn>
           
