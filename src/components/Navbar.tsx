@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Menu, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -24,10 +25,10 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { name: "Services", href: "#services" },
-    { name: "About", href: "#about" },
-    { name: "Testimonials", href: "#testimonials" },
-    { name: "Contact", href: "#contact" }
+    { name: "Services", href: "/#services" },
+    { name: "About", href: "/#about" },
+    { name: "Testimonials", href: "/#testimonials" },
+    { name: "Contact", href: "/#contact" }
   ];
 
   return (
@@ -36,14 +37,14 @@ const Navbar = () => {
       isScrolled ? "glass-nav py-3" : "py-5 bg-transparent"
     )}>
       <div className="container mx-auto flex items-center justify-between container-padding">
-        <a href="#" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <span className={cn(
             "text-2xl font-bold text-lumino-800 transition-all duration-300",
             isScrolled ? "text-lumino-800" : "text-lumino-800"
           )}>
             Lumino<span className="text-lumino-500">Strategies</span>
           </span>
-        </a>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-1">
@@ -61,10 +62,12 @@ const Navbar = () => {
               {link.name}
             </a>
           ))}
-          <Button 
-            className="ml-2 bg-lumino-600 hover:bg-lumino-700 text-white transition-all duration-200 shadow-sm">
-            Get Started
-          </Button>
+          <a href="/#contact">
+            <Button 
+              className="ml-2 bg-lumino-600 hover:bg-lumino-700 text-white transition-all duration-200 shadow-sm">
+              Get Started
+            </Button>
+          </a>
         </nav>
 
         {/* Mobile Menu Button */}
@@ -96,12 +99,13 @@ const Navbar = () => {
               {link.name}
             </a>
           ))}
-          <Button 
-            className="mt-2 bg-lumino-600 hover:bg-lumino-700 text-white w-full justify-center"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Get Started
-          </Button>
+          <a href="/#contact" onClick={() => setMobileMenuOpen(false)}>
+            <Button 
+              className="mt-2 bg-lumino-600 hover:bg-lumino-700 text-white w-full justify-center"
+            >
+              Get Started
+            </Button>
+          </a>
         </div>
       </div>
     </header>

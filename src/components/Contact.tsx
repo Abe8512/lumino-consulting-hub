@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -25,6 +25,7 @@ const formSchema = z.object({
 const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,12 +51,33 @@ const Contact = () => {
       
       form.reset();
       setIsSuccess(true);
+      toast({
+        title: "Message Sent!",
+        description: "We'll get back to you shortly.",
+        duration: 5000
+      });
       setTimeout(() => setIsSuccess(false), 5000);
     } catch (error) {
       console.error('Error submitting form:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send your message. Please try again.",
+        variant: "destructive",
+        duration: 5000
+      });
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleBookConsultation = () => {
+    const nameField = document.getElementById('name');
+    if (nameField) {
+      nameField.scrollIntoView({ behavior: 'smooth' });
+      nameField.focus();
+    }
+    
+    form.setValue('subject', 'Consultation Request');
   };
 
   return (
@@ -99,6 +121,7 @@ const Contact = () => {
                           <FormLabel>Full Name</FormLabel>
                           <FormControl>
                             <Input 
+                              id="name"
                               placeholder="Your name" 
                               className="w-full bg-white/70 border-gray-200 focus:border-lumino-500 focus:ring focus:ring-lumino-200 focus:ring-opacity-50 transition-all"
                               {...field}
@@ -296,7 +319,10 @@ const Contact = () => {
                 <p className="text-gray-600 mb-4">
                   Schedule a free 30-minute consultation with one of our operational experts.
                 </p>
-                <Button className="w-full bg-lumino-600 hover:bg-lumino-700 text-white">
+                <Button 
+                  className="w-full bg-lumino-600 hover:bg-lumino-700 text-white"
+                  onClick={handleBookConsultation}
+                >
                   Book a Consultation
                 </Button>
               </div>

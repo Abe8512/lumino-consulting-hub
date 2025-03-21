@@ -4,6 +4,20 @@ import { FadeIn } from './animations/FadeIn';
 import { ArrowRight } from 'lucide-react';
 
 const Hero = () => {
+  const scrollToContact = () => {
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToServices = () => {
+    const servicesSection = document.getElementById('services');
+    if (servicesSection) {
+      servicesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="relative overflow-hidden pt-32 pb-16 md:pt-40 md:pb-24">
       {/* Background elements */}
@@ -33,11 +47,20 @@ const Hero = () => {
           
           <FadeIn delay={400}>
             <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-              <Button size="lg" className="bg-lumino-600 hover:bg-lumino-700 text-white shadow-sm group px-6 py-6">
+              <Button 
+                size="lg" 
+                className="bg-lumino-600 hover:bg-lumino-700 text-white shadow-sm group px-6 py-6"
+                onClick={scrollToContact}
+              >
                 Schedule a Consultation
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
-              <Button size="lg" variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 py-6">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-gray-300 text-gray-700 hover:bg-gray-50 py-6"
+                onClick={scrollToServices}
+              >
                 Explore Our Services
               </Button>
             </div>
